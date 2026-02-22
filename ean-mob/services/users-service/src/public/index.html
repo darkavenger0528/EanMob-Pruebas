@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users Service - EAN</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: #e6f0ff;
+      color: #003366;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    h1 { font-size: 24px; color: #003366; margin-bottom: 8px; }
+    p { color: #666; font-size: 15px; margin-bottom: 24px; }
+    .endpoints { text-align: left; background: #f8f9fa; border-radius: 8px; padding: 16px; }
+    .endpoints h3 { font-size: 13px; color: #999; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .endpoint { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; }
+    .method {
+      font-size: 11px; font-weight: 700; padding: 2px 8px;
+      border-radius: 4px; min-width: 44px; text-align: center;
+    }
+    .post { background: #d4edda; color: #155724; }
+    .get  { background: #cce5ff; color: #004085; }
+    code { color: #333; font-family: monospace; }
+    .status { margin-top: 20px; font-size: 13px; color: #28a745; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">Microservicio</span>
+    <h1>Users Service</h1>
+    <p>Sistema de autenticación — Universidad EAN</p>
+
+    <div class="endpoints">
+      <h3>Endpoints disponibles</h3>
+
+      <div class="endpoint">
+        <span class="method get">GET</span>
+        <code>/health</code>
+      </div>
+      <div class="endpoint">
+        <span class="method post">POST</span>
+        <code>/api/auth/register</code>
+      </div>
+      <div class="endpoint">
+        <span class="method post">POST</span>
+        <code>/api/auth/verify-otp</code>
+      </div>
+      <div class="endpoint">
+        <span class="method post">POST</span>
+        <code>/api/auth/resend-otp</code>
+      </div>
+      <div class="endpoint">
+        <span class="method post">POST</span>
+        <code>/api/auth/login</code>
+      </div>
+    </div>
+
+    <p class="status">✅ Servicio en línea</p>
+  </div>
+</body>
+</html>

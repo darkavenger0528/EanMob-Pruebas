@@ -1,0 +1,51 @@
+services:
+
+  # ── Base de datos ──────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: ean-mob-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: users_ean
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./services/users-service/users_ean.sql:/docker-entrypoint-initdb.d/users_ean.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ── Users Service ──────────────────────────────────────────────────────────
+  users-service:
+    build: ./services/users-service
+    container_name: ean-mob-users-service
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PORT: 3001
+      DB_HOST: mysql          # <-- nombre del servicio Docker, NO localhost
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root1234
+      DB_NAME: users_ean
+      JWT_SECRET: super_secreto_ean_2025_cambiame
+      JWT_EXPIRES_IN: 8h
+      # ── SMTP (ajusta con tus datos reales) ──
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USER: tu_correo@gmail.com
+      SMTP_PASS: tu_app_password_de_gmail
+      SMTP_FROM: '"Universidad EAN" <no-reply@universidadean.edu.co>'
+      OTP_LENGTH: 6
+      OTP_EXPIRY_MINUTES: 10
+
+volumes:
+  mysql_data:
