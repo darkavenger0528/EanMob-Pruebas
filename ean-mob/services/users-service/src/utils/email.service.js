@@ -26,7 +26,7 @@ async function sendOtpEmail(toEmail, otp, nombreCompleto) {
       "api-key": emailConfig.brevoApiKey,
     },
     body: JSON.stringify({
-      sender: { name: "Universidad EAN", email: "no-reply@universidadean.edu.co" },
+      sender: { name: "Universidad EAN", email: process.env.SMTP_FROM },
       to: [{ email: toEmail, name: nombreCompleto }],
       subject: "Tu código de verificación - Universidad EAN",
       htmlContent: html,
@@ -40,3 +40,4 @@ async function sendOtpEmail(toEmail, otp, nombreCompleto) {
 }
 
 module.exports = { generateOtp, getOtpExpiry, sendOtpEmail };
+
