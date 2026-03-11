@@ -1,18 +1,50 @@
-const express = require("express");
+const { Router } = require("express");
 const vehiclesController = require("../controllers/vehicles.controller");
+const { authMiddleware }  = require("../middlewares/auth.middleware");
+const { validateCreateVehicle, validateUpdateVehicle } = require("../middlewares/validate.middleware");
 
-const router = express.Router();
+const router = Router();
 
-// POST /vehicles
-router.post("/vehicles", vehiclesController.create);
+/**
+ * @route  POST /api/vehicles
+ * @desc   Registrar nuevo vehículo (verifica RTM automáticamente)
+ * @access Privado
+ */
+router.post("/",     authMiddleware, validateCreateVehicle, vehiclesController.create);
 
-// GET /vehicles/:id
-router.get("/vehicles/:id", vehiclesController.getById);
+/**
+ * @route  GET /api/vehicles/my
+ * @desc   Obtener todos mis vehículos
+ * @access Privado
+ */
+router.get("/my",    authMiddleware, vehiclesController.getMyVehicles);
 
-// GET /users/:userId/vehicles
-router.get("/users/:userId/vehicles", vehiclesController.getByUser);
+/**
+ * @route  GET /api/vehicles/:id
+ * @desc   Obtener vehículo por ID
+ * @access Privado
+ */
+router.get("/:id",   authMiddleware, vehiclesController.getById);
 
-// DELETE /vehicles/:id
-router.delete("/vehicles/:id", vehiclesController.remove);
+/**
+ * @route  PUT /api/vehicles/:id
+ * @desc   Actualizar vehículo (solo el dueño)
+ * @access Privado
+ */
+router.put("/:id",   authMiddleware, validateUpdateVehicle, vehiclesController.update);
+
+/**
+ * @route  DELETE /api/vehicles/:id
+ * @desc   Eliminar vehículo (solo el dueño)
+ * @access Privado
+ */
+router.delete("/:id", authMiddleware, vehiclesController.remove);
+
+/**
+ * @route  POST /api/vehicles/:id/verify-rtm
+ * @desc   Re-verificar RTM de un vehículo
+ * @access Privado
+ */
+router.post("/:id/verify-rtm", authMiddleware, vehiclesController.recheckRTM);
 
 module.exports = router;
