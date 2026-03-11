@@ -84,6 +84,29 @@ async function verifyEmail(correo) {
   );
 }
 
+// ─── Actualizar perfil ───────────────────────────────────────────────────────
+async function updateUser(id, fields) {
+  // Construir SET dinámico solo con campos permitidos
+  const allowed = ["nombre_completo", "fecha_nacimiento", "grupo_sanguineo", "sexo", "altura_cm", "peso_kg"];
+  const updates = [];
+  const values  = [];
+
+  for (const key of allowed) {
+    if (fields[key] !== undefined) {
+      updates.push(`${key} = ?`);
+      values.push(fields[key]);
+    }
+  }
+
+  if (updates.length === 0) return; // nada que actualizar
+
+  values.push(id);
+  await pool.query(
+    `UPDATE usuarios SET ${updates.join(", ")} WHERE id = ?`,
+    values
+  );
+}
+
 module.exports = {
   findByEmail,
   findByNumeroId,
@@ -91,4 +114,5 @@ module.exports = {
   createUser,
   saveOtp,
   verifyEmail,
+  updateUser,
 };
