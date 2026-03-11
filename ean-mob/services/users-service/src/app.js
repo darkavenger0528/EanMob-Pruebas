@@ -1,8 +1,9 @@
 const express = require("express");
-const cors = require("cors");
-const path = require("path");
+const cors    = require("cors");
+const path    = require("path");
 
-const authRoutes = require("./routes/auth.routes");
+const authRoutes   = require("./routes/auth.routes");
+const usersRoutes  = require("./routes/users.routes");
 const healthRoutes = require("./routes/health.routes");
 const { errorMiddleware } = require("./middlewares/error.middleware");
 
@@ -18,7 +19,8 @@ app.get("/", (req, res) => {
 });
 
 app.use(healthRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/api/auth",  authRoutes);
+app.use("/api/users", usersRoutes);   // ← nuevo
 
 app.use(errorMiddleware);
 
