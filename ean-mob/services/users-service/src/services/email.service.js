@@ -1,42 +1,74 @@
-const nodemailer = require('nodemailer');
-const config = require('../config/email.config');
+const emailConfig = require("../config/email.config");
 
-const transporter = nodemailer.createTransport({
-  host: config.host,
-  port: config.port,
-  secure: false,
-  auth: {
-    user: config.user,
-    pass: config.pass,
-  },
-});
-
-function generarOtp(length) {
-  let code = '';
+// ─── Generar OTP numérico ────────────────────────────────────────────────────
+function generateOtp(length = emailConfig.otpLength) {
+  const digits = "0123456789";
+  let otp = "";
   for (let i = 0; i < length; i++) {
-    code += Math.floor(Math.random() * 10);
+    otp += digits[Math.floor(Math.random() * digits.length)];
   }
-  return code;
+  return otp;
 }
 
-async function enviarOtp(email) {
-  if (!email.endsWith('@universidadean.edu.co')) {
-    throw new Error('El correo debe ser institucional EAN');
-  }
+// ─── Calcular fecha de expiración ────────────────────────────────────────────
+function getOtpExpiry(minutes = emailConfig.otpExpiryMinutes) {
+  const date = new Date();
+  date.setMinutes(date.getMinutes() + minutes);
+  return date;
+}
 
-  const otp = generarOtp(config.otpLength);
-  const expiracion = new Date(Date.now() + config.otpExpiryMinutes * 60000);
+// ─── Enviar OTP por correo usando Brevo API (HTTPS) ─────────────────────────
+async function sendOtpEmail(toEmail, otp, nombreCompleto) {
+  const expiryMinutes = emailConfig.otpExpiryMinutes;
 
-  // TODO: guarda otp + expiracion en la BD (tabla user_verification)
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;
+                border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background-color: #003366; padding: 24px; text-align: center;">
+        <h2 style="color: #ffffff; margin: 0;">Universidad EAN</h2>
+        <p style="color: #ccd9e8; margin: 4px 0 0;">Verificación de correo institucional</p>
+      </div>
+      <div style="padding: 32px;">
+        <p style="font-size: 16px; color: #333;">Hola, <strong>${nombreCompleto}</strong>:</p>
+        <p style="color: #555;">Tu código de verificación es:</p>
+        <div style="text-align: center; margin: 24px 0;">
+          <span style="font-size: 40px; font-weight: bold; letter-spacing: 12px; color: #003366;">
+            ${otp}
+          </span>
+        </div>
+        <p style="color: #888; font-size: 13px;">
+          Este código expira en <strong>${expiryMinutes} minutos</strong>.
+          No lo compartas con nadie.
+        </p>
+      </div>
+      <div style="background-color: #f5f5f5; padding: 16px; text-align: center;">
+        <p style="font-size: 12px; color: #aaa; margin: 0;">
+          Si no solicitaste este código, ignora este mensaje.
+        </p>
+      </div>
+    </div>
+  `;
 
-  await transporter.sendMail({
-    from: config.from,
-    to: email,
-    subject: 'Código de verificación EAN',
-    text: `Tu código de verificación es: ${otp}. Expira en ${config.otpExpiryMinutes} minutos.`,
+  const payload = {
+    sender: { name: "Universidad EAN", email: emailConfig.from },
+    to:     [{ email: toEmail, name: nombreCompleto }],
+    subject: "Tu código de verificación - Universidad EAN",
+    htmlContent: html,
+  };
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": emailConfig.brevoApiKey,
+    },
+    body: JSON.stringify(payload),
   });
 
-  return { otp, expiracion };
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Brevo API error: ${errorText}`);
+  }
 }
 
-module.exports = { enviarOtp };
+module.exports = { generateOtp, getOtpExpiry, sendOtpEmail };
