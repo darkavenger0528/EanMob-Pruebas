@@ -16,7 +16,7 @@ module.exports = {
   DB_NAME:            requireEnv("DB_NAME", "users_ean"),
   JWT_SECRET:         requireEnv("JWT_SECRET", "dev_secret_changeme"),
   JWT_EXPIRES_IN:     requireEnv("JWT_EXPIRES_IN", "8h"),
-  BREVO_API_KEY:      requireEnv("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"),
+  BREVO_API_KEY:      requireEnv("BREVO_API_KEY"),
   SMTP_FROM:          requireEnv("SMTP_FROM", "no-reply@universidadean.edu.co"),
   OTP_LENGTH:         requireEnv("OTP_LENGTH", "6"),
   OTP_EXPIRY_MINUTES: requireEnv("OTP_EXPIRY_MINUTES", "5"),
