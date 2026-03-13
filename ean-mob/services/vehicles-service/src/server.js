@@ -1,11 +1,11 @@
-const app           = require("./app");
-const env           = require("./config/env");
-const { initDb }    = require("./config/db");
+const app        = require("./app");
+const env        = require("./config/env");
+const { initDb } = require("./config/db");
 
 async function start() {
-  await initDb(); // Crea la tabla si no existe
-  app.listen(Number(env.PORT), () => {
-    console.log(`Vehicles service running on http://localhost:${env.PORT}`);
+  await initDb();
+  app.listen(Number(env.PORT), "0.0.0.0", () => {
+    console.log(`Vehicles service running on port ${env.PORT}`);
   });
 }
 
