@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const usersController = require("../controllers/users.controller");
 const { authMiddleware } = require("../middlewares/auth.middleware");
-const { validateUpdateProfile } = require("../middlewares/validate.middleware");
+const { validateUpdateProfile, validateAddCommunity } = require("../middlewares/validate.middleware");
 
 const router = Router();
 
@@ -18,5 +18,33 @@ router.get("/profile", authMiddleware, usersController.getProfile);
  * @access Privado — requiere Bearer token
  */
 router.put("/profile", authMiddleware, validateUpdateProfile, usersController.updateProfile);
+
+/**
+ * @route  GET /api/users/communities
+ * @desc   Listar todas las comunidades disponibles
+ * @access Privado — requiere Bearer token
+ */
+router.get("/communities", authMiddleware, usersController.getAllCommunities);
+
+/**
+ * @route  GET /api/users/profile/communities
+ * @desc   Listar las comunidades a las que pertenece el usuario autenticado
+ * @access Privado — requiere Bearer token
+ */
+router.get("/profile/communities", authMiddleware, usersController.getUserCommunities);
+
+/**
+ * @route  POST /api/users/profile/communities
+ * @desc   Agregar el usuario autenticado a una comunidad { community_id }
+ * @access Privado — requiere Bearer token
+ */
+router.post("/profile/communities", authMiddleware, validateAddCommunity, usersController.addUserCommunity);
+
+/**
+ * @route  DELETE /api/users/profile/communities/:communityId
+ * @desc   Quitar el usuario autenticado de una comunidad
+ * @access Privado — requiere Bearer token
+ */
+router.delete("/profile/communities/:communityId", authMiddleware, usersController.removeUserCommunity);
 
 module.exports = router;

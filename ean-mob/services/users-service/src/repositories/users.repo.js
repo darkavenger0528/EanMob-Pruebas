@@ -87,7 +87,7 @@ async function verifyEmail(correo) {
 // ─── Actualizar perfil ───────────────────────────────────────────────────────
 async function updateUser(id, fields) {
   // Construir SET dinámico solo con campos permitidos
-  const allowed = ["nombre_completo", "fecha_nacimiento", "grupo_sanguineo", "sexo", "altura_cm", "peso_kg"];
+  const allowed = ["nombre_completo", "fecha_nacimiento", "grupo_sanguineo", "sexo", "altura_cm", "peso_kg", "celular"];
   const updates = [];
   const values  = [];
 
@@ -107,6 +107,54 @@ async function updateUser(id, fields) {
   );
 }
 
+// ─── Comunidades: listar todas ───────────────────────────────────────────────
+async function findAllCommunities() {
+  const [rows] = await pool.query(
+    "SELECT id, nombre, dominio_email, descripcion FROM comunidades WHERE activa = TRUE ORDER BY nombre"
+  );
+  return rows;
+}
+
+// ─── Comunidades: listar las del usuario ────────────────────────────────────
+async function findUserCommunities(userId) {
+  const [rows] = await pool.query(
+    `SELECT c.id, c.nombre, c.dominio_email, c.descripcion, uc.verified, uc.created_at AS joined_at
+     FROM comunidades c
+     INNER JOIN usuario_comunidad uc ON uc.community_id = c.id
+     WHERE uc.user_id = ?
+     ORDER BY c.nombre`,
+    [userId]
+  );
+  return rows;
+}
+
+// ─── Comunidades: agregar una al usuario (ignora si ya existe) ───────────────
+async function addUserCommunity(userId, communityId) {
+  await pool.query(
+    `INSERT IGNORE INTO usuario_comunidad (user_id, community_id, verified)
+     VALUES (?, ?, FALSE)`,
+    [userId, communityId]
+  );
+}
+
+// ─── Comunidades: quitar una del usuario ────────────────────────────────────
+async function removeUserCommunity(userId, communityId) {
+  const [result] = await pool.query(
+    "DELETE FROM usuario_comunidad WHERE user_id = ? AND community_id = ?",
+    [userId, communityId]
+  );
+  return result.affectedRows > 0;
+}
+
+// ─── Comunidades: verificar que existe una comunidad por ID ─────────────────
+async function findCommunityById(communityId) {
+  const [rows] = await pool.query(
+    "SELECT id, nombre FROM comunidades WHERE id = ? AND activa = TRUE LIMIT 1",
+    [communityId]
+  );
+  return rows[0] || null;
+}
+
 module.exports = {
   findByEmail,
   findByNumeroId,
@@ -115,4 +163,9 @@ module.exports = {
   saveOtp,
   verifyEmail,
   updateUser,
+  findAllCommunities,
+  findUserCommunities,
+  addUserCommunity,
+  removeUserCommunity,
+  findCommunityById,
 };
