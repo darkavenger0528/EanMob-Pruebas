@@ -40,6 +40,12 @@ const updateProfileSchema = z.object({
   sexo:             z.enum(["H", "M", "Otro"]).optional(),
   altura_cm:        z.number().positive().optional(),
   peso_kg:          z.number().positive().optional(),
+  celular:          z.string().min(7).max(15).optional(),
+}).strict();
+
+// Agregar una comunidad al perfil
+const addCommunitySchema = z.object({
+  community_id: z.number().int().positive(),
 }).strict();
 
 function validate(schema) {
@@ -62,4 +68,5 @@ module.exports = {
   validateResendOtp:     validate(resendOtpSchema),
   validateLogin:         validate(loginSchema),
   validateUpdateProfile: validate(updateProfileSchema),
+  validateAddCommunity:  validate(addCommunitySchema),
 };
