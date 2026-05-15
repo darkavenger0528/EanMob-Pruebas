@@ -15,5 +15,6 @@ module.exports = {
   DB_USER: requireEnv("DB_USER"),
   DB_PASSWORD: requireEnv("DB_PASSWORD"),
   DB_NAME: requireEnv("DB_NAME"), // trips_ean
-  JWT_SECRET: process.env.JWT_SECRET || "dev_secret_changeme"
+  JWT_SECRET: process.env.JWT_SECRET || "dev_secret_changeme",
+  MATCHING_SERVICE_URL: process.env.MATCHING_SERVICE_URL || "http://localhost:8000"
 };
