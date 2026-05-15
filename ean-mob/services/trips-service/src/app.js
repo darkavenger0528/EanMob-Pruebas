@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { errorMiddleware } = require("./middlewares/error.middleware");
 const tripsRoutes = require("./routes/trips.routes");
+const searchRequestsRoutes = require("./routes/searchRequests.routes");
 const { ping } = require("./config/db");
 
 const app = express();
@@ -15,6 +16,7 @@ app.get("/health", async (req, res) => {
 });
 
 app.use(tripsRoutes);
+app.use(searchRequestsRoutes);
 app.use(errorMiddleware);
 
 module.exports = app;

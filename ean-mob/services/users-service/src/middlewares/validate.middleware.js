@@ -48,6 +48,11 @@ const addCommunitySchema = z.object({
   community_id: z.number().int().positive(),
 }).strict();
 
+// Verificar OTP de pertenencia a comunidad
+const verifyCommunityOtpSchema = z.object({
+  otp: z.string().length(6, "El OTP debe tener 6 dígitos"),
+}).strict();
+
 function validate(schema) {
   return (req, res, next) => {
     const result = schema.safeParse(req.body);
@@ -69,4 +74,5 @@ module.exports = {
   validateLogin:         validate(loginSchema),
   validateUpdateProfile: validate(updateProfileSchema),
   validateAddCommunity:  validate(addCommunitySchema),
+  validateVerifyCommunityOtp: validate(verifyCommunityOtpSchema),
 };

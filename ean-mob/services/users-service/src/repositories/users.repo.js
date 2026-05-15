@@ -128,15 +128,6 @@ async function findUserCommunities(userId) {
   return rows;
 }
 
-// ─── Comunidades: agregar una al usuario (ignora si ya existe) ───────────────
-async function addUserCommunity(userId, communityId) {
-  await pool.query(
-    `INSERT IGNORE INTO usuario_comunidad (user_id, community_id, verified)
-     VALUES (?, ?, FALSE)`,
-    [userId, communityId]
-  );
-}
-
 // ─── Comunidades: quitar una del usuario ────────────────────────────────────
 async function removeUserCommunity(userId, communityId) {
   const [result] = await pool.query(
@@ -146,10 +137,59 @@ async function removeUserCommunity(userId, communityId) {
   return result.affectedRows > 0;
 }
 
+// ─── Comunidades: detalle de relación usuario-comunidad ─────────────────────
+async function findUserCommunity(userId, communityId) {
+  const [rows] = await pool.query(
+    `SELECT uc.id, uc.user_id, uc.community_id, uc.verified, uc.verified_at,
+            uc.otp, uc.otp_expires_at,
+            c.nombre, c.dominio_email
+     FROM usuario_comunidad uc
+     INNER JOIN comunidades c ON c.id = uc.community_id
+     WHERE uc.user_id = ? AND uc.community_id = ?
+     LIMIT 1`,
+    [userId, communityId]
+  );
+  return rows[0] || null;
+}
+
+// ─── Comunidades: agregar una al usuario con OTP pendiente ──────────────────
+async function addUserCommunity(userId, communityId, otp, otp_expires_at) {
+  await pool.query(
+    `INSERT INTO usuario_comunidad (user_id, community_id, verified, otp, otp_expires_at)
+     VALUES (?, ?, FALSE, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       otp = IF(verified = TRUE, otp, VALUES(otp)),
+       otp_expires_at = IF(verified = TRUE, otp_expires_at, VALUES(otp_expires_at))`,
+    [userId, communityId, otp, otp_expires_at]
+  );
+}
+
+// ─── Comunidades: guardar/reemplazar OTP de comunidad ───────────────────────
+async function saveCommunityOtp(userId, communityId, otp, otp_expires_at) {
+  const [result] = await pool.query(
+    `UPDATE usuario_comunidad
+     SET otp = ?, otp_expires_at = ?
+     WHERE user_id = ? AND community_id = ? AND verified = FALSE`,
+    [otp, otp_expires_at, userId, communityId]
+  );
+  return result.affectedRows > 0;
+}
+
+// ─── Comunidades: verificar comunidad (limpiar OTP) ─────────────────────────
+async function verifyUserCommunity(userId, communityId) {
+  const [result] = await pool.query(
+    `UPDATE usuario_comunidad
+     SET verified = TRUE, verified_at = CURRENT_TIMESTAMP, otp = NULL, otp_expires_at = NULL
+     WHERE user_id = ? AND community_id = ?`,
+    [userId, communityId]
+  );
+  return result.affectedRows > 0;
+}
+
 // ─── Comunidades: verificar que existe una comunidad por ID ─────────────────
 async function findCommunityById(communityId) {
   const [rows] = await pool.query(
-    "SELECT id, nombre FROM comunidades WHERE id = ? AND activa = TRUE LIMIT 1",
+    "SELECT id, nombre, dominio_email FROM comunidades WHERE id = ? AND activa = TRUE LIMIT 1",
     [communityId]
   );
   return rows[0] || null;
@@ -165,7 +205,10 @@ module.exports = {
   updateUser,
   findAllCommunities,
   findUserCommunities,
-  addUserCommunity,
   removeUserCommunity,
+  findUserCommunity,
+  addUserCommunity,
+  saveCommunityOtp,
+  verifyUserCommunity,
   findCommunityById,
 };

@@ -1,14 +1,15 @@
 const { pool } = require("../config/db");
 
 // ─── Crear vehículo ───────────────────────────────────────────────────────────
-async function createVehicle({ user_id, tipo_vehiculo, modelo, placa, color,
-                                soat_vigente, rtm_vigente, rtm_verificado, rtm_mensaje }) {
+async function createVehicle({ user_id, tipo_vehiculo, marca, modelo, anio, placa, color,
+                                numero_puestos, soat_vigente, rtm_vigente,
+                                rtm_verificado, rtm_mensaje }) {
   const [result] = await pool.query(
     `INSERT INTO vehiculos
-       (user_id, tipo_vehiculo, modelo, placa, color,
+       (user_id, tipo_vehiculo, marca, modelo, anio, placa, color, numero_puestos,
         soat_vigente, rtm_vigente, rtm_verificado, rtm_mensaje)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [user_id, tipo_vehiculo, modelo, placa, color,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [user_id, tipo_vehiculo, marca, modelo, anio, placa, color, numero_puestos,
      soat_vigente, rtm_vigente, rtm_verificado, rtm_mensaje]
   );
   return result.insertId;
@@ -40,7 +41,7 @@ async function findAllByUser(userId) {
 
 // ─── Actualizar vehículo ──────────────────────────────────────────────────────
 async function updateVehicle(id, fields) {
-  const allowed = ["modelo", "color", "soat_vigente",
+  const allowed = ["marca", "modelo", "anio", "color", "numero_puestos", "soat_vigente",
                    "rtm_vigente", "rtm_verificado", "rtm_mensaje"];
   const updates = [];
   const values  = [];

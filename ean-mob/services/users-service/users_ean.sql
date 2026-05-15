@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS usuario_comunidad (
   community_id INT NOT NULL,
   verified BOOLEAN DEFAULT FALSE,
   verified_at TIMESTAMP NULL,
+  otp VARCHAR(6) NULL,
+  otp_expires_at TIMESTAMP NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY unique_user_community (user_id, community_id),
   FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE,
