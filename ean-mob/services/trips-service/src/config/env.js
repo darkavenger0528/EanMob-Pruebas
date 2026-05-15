@@ -19,5 +19,7 @@ module.exports = {
   DB_SSL_CA_PATH: process.env.DB_SSL_CA_PATH || "",
   DB_SSL_REJECT_UNAUTHORIZED: process.env.DB_SSL_REJECT_UNAUTHORIZED || "true",
   JWT_SECRET: process.env.JWT_SECRET || "dev_secret_changeme",
-  MATCHING_SERVICE_URL: process.env.MATCHING_SERVICE_URL || "http://localhost:8000"
+  MATCHING_SERVICE_URL: process.env.MATCHING_SERVICE_URL || "http://localhost:8000",
+  PICO_PLACA_SERVICE_URL: process.env.PICO_PLACA_SERVICE_URL || "http://localhost:8002",
+  PICO_PLACA_TIMEOUT_MS: process.env.PICO_PLACA_TIMEOUT_MS || "2000"
 };
