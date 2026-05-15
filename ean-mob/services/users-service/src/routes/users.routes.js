@@ -1,7 +1,11 @@
 const { Router } = require("express");
 const usersController = require("../controllers/users.controller");
 const { authMiddleware } = require("../middlewares/auth.middleware");
-const { validateUpdateProfile, validateAddCommunity } = require("../middlewares/validate.middleware");
+const {
+  validateUpdateProfile,
+  validateAddCommunity,
+  validateVerifyCommunityOtp,
+} = require("../middlewares/validate.middleware");
 
 const router = Router();
 
@@ -39,6 +43,25 @@ router.get("/profile/communities", authMiddleware, usersController.getUserCommun
  * @access Privado — requiere Bearer token
  */
 router.post("/profile/communities", authMiddleware, validateAddCommunity, usersController.addUserCommunity);
+
+/**
+ * @route  POST /api/users/profile/communities/:communityId/resend-otp
+ * @desc   Reenviar OTP para verificar pertenencia a una comunidad
+ * @access Privado — requiere Bearer token
+ */
+router.post("/profile/communities/:communityId/resend-otp", authMiddleware, usersController.resendCommunityOtp);
+
+/**
+ * @route  POST /api/users/profile/communities/:communityId/verify-otp
+ * @desc   Verificar OTP para confirmar pertenencia a una comunidad
+ * @access Privado — requiere Bearer token
+ */
+router.post(
+  "/profile/communities/:communityId/verify-otp",
+  authMiddleware,
+  validateVerifyCommunityOtp,
+  usersController.verifyCommunityOtp
+);
 
 /**
  * @route  DELETE /api/users/profile/communities/:communityId

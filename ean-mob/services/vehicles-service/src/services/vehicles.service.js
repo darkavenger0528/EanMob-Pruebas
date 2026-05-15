@@ -14,9 +14,12 @@ async function create(data, userId) {
   const id = await vehiclesRepo.createVehicle({
     user_id:        userId,
     tipo_vehiculo:  data.tipo_vehiculo,
+    marca:          data.marca,
     modelo:         data.modelo,
+    anio:           data.anio,
     placa:          data.placa,
     color:          data.color,
+    numero_puestos: data.numero_puestos,
     soat_vigente:   data.soat_vigente ?? false,
     rtm_vigente:    runt.rtm_vigente,
     rtm_verificado: runt.rtm_verificado,
