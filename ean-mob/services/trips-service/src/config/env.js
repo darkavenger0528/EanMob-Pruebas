@@ -14,5 +14,6 @@ module.exports = {
   DB_PORT: process.env.DB_PORT || "3306",
   DB_USER: requireEnv("DB_USER"),
   DB_PASSWORD: requireEnv("DB_PASSWORD"),
-  DB_NAME: requireEnv("DB_NAME") // trips_ean
+  DB_NAME: requireEnv("DB_NAME"), // trips_ean
+  JWT_SECRET: process.env.JWT_SECRET || "dev_secret_changeme"
 };
