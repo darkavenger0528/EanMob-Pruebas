@@ -26,7 +26,7 @@ const MyVehicles = () => {
 
   const fetchVehicles = async () => {
     try {
-      const res = await axios.get('http://localhost:3003/api/vehicles/my', { headers })
+      const res = await axios.get(`${import.meta.env.VITE_VEHICLES_API}/vehicles/my`, { headers })
       setVehicles(res.data)
     } catch {
       setError('Error al cargar vehículos')
@@ -41,7 +41,7 @@ const MyVehicles = () => {
     if (!confirm('¿Eliminar este vehículo?')) return
     setDeletingId(id)
     try {
-      await axios.delete(`http://localhost:3003/api/vehicles/${id}`, { headers })
+      await axios.delete(`${import.meta.env.VITE_VEHICLES_API}/vehicles/my`, { headers })
       setVehicles(v => v.filter(x => x.id !== id))
     } catch (err: any) {
       alert(err.response?.data?.message || 'Error al eliminar')

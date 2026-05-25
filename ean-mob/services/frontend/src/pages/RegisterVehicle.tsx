@@ -22,25 +22,25 @@ const RegisterVehicle = () => {
     })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
     try {
-      const token = localStorage.getItem('token')
-      await axios.post('http://localhost:3003/api/vehicles', {
+        const token = localStorage.getItem('token')
+        await axios.post(`${import.meta.env.VITE_VEHICLES_API}/vehicles`, {
         ...form,
         modelo: Number(form.modelo),
-      }, {
+        }, {
         headers: { Authorization: `Bearer ${token}` }
-      })
-      navigate('/my-vehicles')
+        })
+        navigate('/my-vehicles')
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al registrar vehículo')
+        setError(err.response?.data?.message || 'Error al registrar vehículo')
     } finally {
-      setLoading(false)
+        setLoading(false)
     }
-  }
+    }
 
   return (
     <div className="min-h-screen bg-background px-4 py-8">

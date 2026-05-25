@@ -9,6 +9,7 @@ import TripDetail from '../pages/TripDetail'
 import Profile from '../pages/Profile'
 import RegisterVehicle from '../pages/RegisterVehicle'
 import MyVehicles from '../pages/MyVehicles'
+import SearchTrip from '../pages/SearchTrip'
 
 const AppRouter = () => {
   return (
@@ -25,6 +26,7 @@ const AppRouter = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/register-vehicle" element={<RegisterVehicle />} />
         <Route path="/my-vehicles" element={<MyVehicles />} />
+        <Route path="/search-trips" element={<SearchTrip />} />
       </Routes>
     </BrowserRouter>
   )

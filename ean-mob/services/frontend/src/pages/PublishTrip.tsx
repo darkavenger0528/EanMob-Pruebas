@@ -25,8 +25,7 @@ const PublishTrip = () => {
     try {
       const token = localStorage.getItem('token')
       const payload = JSON.parse(atob(token!.split('.')[1]))
-      await axios.post('http://localhost:3002/api/trips', {
-        ...form,
+      await axios.post(`${import.meta.env.VITE_TRIPS_API}/trips`, {        ...form,
         conductor_id: payload.sub,
       }, {
         headers: { Authorization: `Bearer ${token}` }
