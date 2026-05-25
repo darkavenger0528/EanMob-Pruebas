@@ -7,6 +7,8 @@ import PublishTrip from '../pages/PublishTrip'
 import MyTrips from '../pages/MyTrips'
 import TripDetail from '../pages/TripDetail'
 import Profile from '../pages/Profile'
+import RegisterVehicle from '../pages/RegisterVehicle'
+import MyVehicles from '../pages/MyVehicles'
 
 const AppRouter = () => {
   return (
@@ -21,6 +23,8 @@ const AppRouter = () => {
         <Route path="/my-trips" element={<MyTrips />} />
         <Route path="/trips/:id" element={<TripDetail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/register-vehicle" element={<RegisterVehicle />} />
+        <Route path="/my-vehicles" element={<MyVehicles />} />
       </Routes>
     </BrowserRouter>
   )

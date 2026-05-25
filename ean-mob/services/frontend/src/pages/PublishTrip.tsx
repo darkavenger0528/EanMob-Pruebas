@@ -5,7 +5,11 @@ import axios from 'axios'
 const PublishTrip = () => {
   const navigate = useNavigate()
   const [form, setForm] = useState({
-    origen: '', destino: '', fecha: '', hora: '', cupos: 1, precio: ''
+    origen: '',
+    destino: '',
+    hora_inicio: '',
+    hora_fin: '',
+    nombre_prestador: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,7 +24,11 @@ const PublishTrip = () => {
     setError('')
     try {
       const token = localStorage.getItem('token')
-      await axios.post('http://localhost:3001/api/trips', form, {
+      const payload = JSON.parse(atob(token!.split('.')[1]))
+      await axios.post('http://localhost:3002/api/trips', {
+        ...form,
+        conductor_id: payload.sub,
+      }, {
         headers: { Authorization: `Bearer ${token}` }
       })
       navigate('/my-trips')
@@ -45,12 +53,11 @@ const PublishTrip = () => {
 
         <form onSubmit={handleSubmit} className="bg-surface rounded-2xl shadow p-6 space-y-4">
           {[
+            { label: 'Tu nombre / apodo', name: 'nombre_prestador', type: 'text', placeholder: 'Ej: Carlos M.' },
             { label: 'Origen', name: 'origen', type: 'text', placeholder: 'Ej: Chapinero' },
             { label: 'Destino', name: 'destino', type: 'text', placeholder: 'Ej: Universidad EAN' },
-            { label: 'Fecha', name: 'fecha', type: 'date', placeholder: '' },
-            { label: 'Hora', name: 'hora', type: 'time', placeholder: '' },
-            { label: 'Cupos disponibles', name: 'cupos', type: 'number', placeholder: '1' },
-            { label: 'Precio por cupo', name: 'precio', type: 'number', placeholder: '5000' },
+            { label: 'Hora de salida', name: 'hora_inicio', type: 'time', placeholder: '' },
+            { label: 'Hora de llegada estimada', name: 'hora_fin', type: 'time', placeholder: '' },
           ].map(field => (
             <div key={field.name}>
               <label className="block text-sm font-medium text-text-primary mb-1">{field.label}</label>
